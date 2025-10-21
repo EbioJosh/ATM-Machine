@@ -1,0 +1,52 @@
+{
+  "users": [
+    {
+      "uid": "A1B2C3D4",
+      "cardNumber": "4532 1234 5678 9012",
+      "name": "Juan Dela Cruz",
+      "accountType": "Savings",
+      "balance": 15420.50,
+      "transactions": [
+        { "date": "2025-10-20", "type": "Withdrawal", "amount": -2000, "balance": 15420.50 },
+        { "date": "2025-10-18", "type": "Deposit", "amount": 5000, "balance": 17420.50 },
+        { "date": "2025-10-15", "type": "Withdrawal", "amount": -1500, "balance": 12420.50 }
+      ]
+    },
+    {
+      "uid": "E5F6G7H8",
+      "cardNumber": "5412 7890 1234 5678",
+      "name": "Maria Santos",
+      "accountType": "Checking",
+      "balance": 8750.25,
+      "transactions": [
+        { "date": "2025-10-19", "type": "Purchase", "amount": -850, "balance": 8750.25 },
+        { "date": "2025-10-17", "type": "Deposit", "amount": 3000, "balance": 9600.25 },
+        { "date": "2025-10-14", "type": "Withdrawal", "amount": -1200, "balance": 6600.25 }
+      ]
+    },
+    {
+      "uid": "I9J0K1L2",
+      "cardNumber": "3782 8224 6310 0005",
+      "name": "Roberto Garcia",
+      "accountType": "Savings",
+      "balance": 42100.00,
+      "transactions": [
+        { "date": "2025-10-21", "type": "Deposit", "amount": 10000, "balance": 42100.00 },
+        { "date": "2025-10-16", "type": "Transfer", "amount": -5000, "balance": 32100.00 },
+        { "date": "2025-10-12", "type": "Deposit", "amount": 15000, "balance": 37100.00 }
+      ]
+    },
+    {
+      "uid": "M3N4O5P6",
+      "cardNumber": "6011 1111 2222 3333",
+      "name": "Ana Reyes",
+      "accountType": "Checking",
+      "balance": 3280.75,
+      "transactions": [
+        { "date": "2025-10-20", "type": "Purchase", "amount": -320, "balance": 3280.75 },
+        { "date": "2025-10-19", "type": "Withdrawal", "amount": -1000, "balance": 3600.75 },
+        { "date": "2025-10-17", "type": "Deposit", "amount": 2500, "balance": 4600.75 }
+      ]
+    }
+  ]
+}

@@ -1,12 +1,67 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useATMConnection } from '@/hooks/useATMConnection';
+import { WelcomeScreen } from '@/components/atm/WelcomeScreen';
+import { UserDashboard } from '@/components/atm/UserDashboard';
+import { useToast } from '@/hooks/use-toast';
+import { useEffect } from 'react';
 
 const Index = () => {
+  const { 
+    isConnected, 
+    isScanning, 
+    currentUser, 
+    error,
+    scanCard, 
+    printReceipt, 
+    logout 
+  } = useATMConnection();
+  
+  const { toast } = useToast();
+
+  // Show error notifications
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Error",
+        description: error,
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
+
+  // Show success notification when user logs in
+  useEffect(() => {
+    if (currentUser) {
+      toast({
+        title: "Welcome!",
+        description: `Hello, ${currentUser.name}. Access granted.`,
+      });
+    }
+  }, [currentUser, toast]);
+
+  // Handle print receipt
+  const handlePrint = async () => {
+    await printReceipt();
+    toast({
+      title: "Receipt Printed",
+      description: "Your transaction receipt has been printed successfully.",
+    });
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      {!currentUser ? (
+        <WelcomeScreen 
+          isConnected={isConnected}
+          onScan={scanCard}
+          isScanning={isScanning}
+        />
+      ) : (
+        <UserDashboard 
+          user={currentUser}
+          onPrint={handlePrint}
+          onLogout={logout}
+        />
+      )}
     </div>
   );
 };
