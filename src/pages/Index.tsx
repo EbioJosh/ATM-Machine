@@ -10,7 +10,8 @@ const Index = () => {
     isScanning, 
     currentUser, 
     error,
-    scanCard, 
+    scanCard,
+    demoLogin,
     printReceipt, 
     logout 
   } = useATMConnection();
@@ -53,6 +54,7 @@ const Index = () => {
         <WelcomeScreen 
           isConnected={isConnected}
           onScan={scanCard}
+          onDemoLogin={demoLogin}
           isScanning={isScanning}
         />
       ) : (

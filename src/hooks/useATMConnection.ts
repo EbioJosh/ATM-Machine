@@ -20,6 +20,7 @@ interface UseATMConnectionReturn {
   currentUser: User | null;
   error: string | null;
   scanCard: () => Promise<void>;
+  demoLogin: () => Promise<void>;
   printReceipt: () => Promise<void>;
   logout: () => void;
   connect: () => void;
@@ -172,6 +173,29 @@ export const useATMConnection = (): UseATMConnectionReturn => {
     }
   }, [fetchUserData, loadMockUsers]);
 
+  // Direct demo login (loads first user instantly)
+  const demoLogin = useCallback(async () => {
+    setIsScanning(true);
+    setError(null);
+
+    try {
+      // Load first mock user directly
+      const users = await loadMockUsers();
+      const firstUser = users[0];
+      
+      if (firstUser) {
+        await fetchUserData(firstUser.uid);
+      } else {
+        setError('No demo users available');
+      }
+    } catch (err) {
+      console.error('Demo login error:', err);
+      setError('Demo login failed');
+    } finally {
+      setIsScanning(false);
+    }
+  }, [fetchUserData, loadMockUsers]);
+
   // Print receipt
   const printReceipt = useCallback(async () => {
     if (!currentUser) {
@@ -232,6 +256,7 @@ export const useATMConnection = (): UseATMConnectionReturn => {
     currentUser,
     error,
     scanCard,
+    demoLogin,
     printReceipt,
     logout,
     connect,

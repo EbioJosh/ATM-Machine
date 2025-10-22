@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 interface WelcomeScreenProps {
   isConnected: boolean;
   onScan: () => void;
+  onDemoLogin: () => void;
   isScanning: boolean;
 }
 
-export const WelcomeScreen = ({ isConnected, onScan, isScanning }: WelcomeScreenProps) => {
+export const WelcomeScreen = ({ isConnected, onScan, onDemoLogin, isScanning }: WelcomeScreenProps) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-atm-screen">
       {/* Connection Status */}
@@ -62,25 +63,37 @@ export const WelcomeScreen = ({ isConnected, onScan, isScanning }: WelcomeScreen
         </p>
       </div>
 
-      {/* Scan Button */}
-      <Button
-        onClick={onScan}
-        disabled={isScanning}
-        size="lg"
-        className="text-lg px-12 py-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300"
-      >
-        {isScanning ? (
-          <>
-            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
-            Scanning...
-          </>
-        ) : (
-          <>
-            <CreditCard className="w-6 h-6 mr-3" />
-            Tap Card to Begin
-          </>
-        )}
-      </Button>
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Button
+          onClick={onScan}
+          disabled={isScanning}
+          size="lg"
+          className="text-lg px-12 py-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300"
+        >
+          {isScanning ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
+              Scanning...
+            </>
+          ) : (
+            <>
+              <CreditCard className="w-6 h-6 mr-3" />
+              Tap Card to Begin
+            </>
+          )}
+        </Button>
+        
+        <Button
+          onClick={onDemoLogin}
+          disabled={isScanning}
+          size="lg"
+          variant="secondary"
+          className="text-lg px-12 py-6 shadow-lg hover:shadow-xl transition-all duration-300"
+        >
+          Quick Demo Login
+        </Button>
+      </div>
 
       {/* Footer Info */}
       <div className="absolute bottom-6 text-center text-sm text-muted-foreground">
