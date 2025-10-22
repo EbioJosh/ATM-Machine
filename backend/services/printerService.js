@@ -8,6 +8,7 @@
  */
 
 import { SerialPort } from 'serialport';
+import { createWriteStream } from 'fs';
 
 // ESC/POS Commands
 const ESC = 0x1B;
@@ -33,6 +34,7 @@ export class PrinterService {
     this.baudRate = baudRate;
     this.port = null;
     this.isConnected = false;
+    this.isRawDevice = this.portPath.startsWith('/dev/usb/lp');
 
     this.connect();
   }
@@ -42,24 +44,40 @@ export class PrinterService {
    */
   connect() {
     try {
-      this.port = new SerialPort({
-        path: this.portPath,
-        baudRate: this.baudRate,
-        dataBits: 8,
-        stopBits: 1,
-        parity: 'none'
-      });
+      if (this.isRawDevice) {
+        // Raw device (e.g., /dev/usb/lp0) - write ESC/POS directly
+        this.port = createWriteStream(this.portPath);
+        this.port.on('open', () => {
+          this.isConnected = true;
+          console.log('✅ Thermal printer connected (raw):', this.portPath);
+          // Initialize printer; ignore errors
+          this.sendCommand(COMMANDS.INIT).catch(() => {});
+        });
+        this.port.on('error', (err) => {
+          console.error('❌ Printer error (raw):', err.message);
+          this.isConnected = false;
+        });
+      } else {
+        // Serial device (e.g., /dev/serial0, /dev/ttyUSB0)
+        this.port = new SerialPort({
+          path: this.portPath,
+          baudRate: this.baudRate,
+          dataBits: 8,
+          stopBits: 1,
+          parity: 'none'
+        });
 
-      this.port.on('open', () => {
-        this.isConnected = true;
-        console.log('✅ Thermal printer connected:', this.portPath);
-        this.sendCommand(COMMANDS.INIT);
-      });
+        this.port.on('open', () => {
+          this.isConnected = true;
+          console.log('✅ Thermal printer connected:', this.portPath);
+          this.sendCommand(COMMANDS.INIT).catch(() => {});
+        });
 
-      this.port.on('error', (err) => {
-        console.error('❌ Printer error:', err.message);
-        this.isConnected = false;
-      });
+        this.port.on('error', (err) => {
+          console.error('❌ Printer error:', err.message);
+          this.isConnected = false;
+        });
+      }
 
     } catch (error) {
       console.error('❌ Failed to connect to printer:', error.message);
@@ -167,11 +185,19 @@ export class PrinterService {
    * Cleanup resources
    */
   cleanup() {
-    if (this.port && this.port.isOpen) {
-      this.port.close((err) => {
-        if (err) console.error('Error closing printer:', err.message);
-        else console.log('✅ Printer connection closed');
-      });
+    if (this.port) {
+      try {
+        if (typeof this.port.close === 'function') {
+          this.port.close((err) => {
+            if (err) console.error('Error closing printer:', err.message);
+            else console.log('✅ Printer connection closed');
+          });
+        } else if (typeof this.port.end === 'function') {
+          this.port.end(() => console.log('✅ Printer stream ended'));
+        }
+      } catch (error) {
+        console.error('Cleanup error:', error.message);
+      }
     }
   }
 }
