@@ -6,7 +6,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 // Import services
-import { RFIDReader } from './services/rfidReader.js';
+import { RFIDReader, MockRFIDReader } from './services/rfidReader.js';
 import { PrinterService } from './services/printerService.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -39,11 +39,17 @@ try {
   console.log('✅ RFID Reader initialized');
 } catch (error) {
   console.warn('⚠️  RFID Reader not available:', error.message);
+  if (process.env.USE_MOCK_RFID === 'true') {
+    rfidReader = new MockRFIDReader();
+    console.log('🎭 Using Mock RFID Reader');
+  }
 }
 
 try {
-  printerService = new PrinterService();
-  console.log('✅ Printer Service initialized');
+  const printerPath = process.env.PRINTER_PATH || '/dev/serial0';
+  const printerBaud = Number(process.env.PRINTER_BAUD) || 19200;
+  printerService = new PrinterService(printerPath, printerBaud);
+  console.log('✅ Printer Service initialized on', printerPath, 'baud', printerBaud);
 } catch (error) {
   console.warn('⚠️  Printer Service not available:', error.message);
 }
